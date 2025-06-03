@@ -21,7 +21,7 @@ type CoWorkingSpace struct {
 type daftarSpace [kapasitas]CoWorkingSpace
 
 // sorting menggunakan selection sort berdasarkan hargaSewa (ascending)
-func selectionSortHarga(t *daftarSpace, n int) {
+func urutkanHarga(t *daftarSpace, n int) {
 	for i := 0; i < n-1; i++ {
 		minIdx := i
 		for j := i + 1; j < n; j++ {
@@ -35,7 +35,7 @@ func selectionSortHarga(t *daftarSpace, n int) {
 }
 
 // sorting menggunakan insertion sort berdasarkan rating (descending)
-func insertionSortRating(t *daftarSpace, n int) {
+func urutkanRating(t *daftarSpace, n int) {
 	for i := 1; i < n; i++ {
 		temp := t[i]
 		j := i
@@ -48,7 +48,7 @@ func insertionSortRating(t *daftarSpace, n int) {
 }
 
 // sorting menggunakan insertion sort berdasarkan nama (Ascending)
-func insertionSortNama(t *daftarSpace, n int) {
+func urutkanNama(t *daftarSpace, n int) {
 	for i := 1; i < n; i++ {
 		temp := t[i]
 		j := i
@@ -61,7 +61,7 @@ func insertionSortNama(t *daftarSpace, n int) {
 }
 
 // binary search pada nama Co-Working Space (harus sudah disorting dulu)
-func binarySearchNama(t daftarSpace, n int, keyword string) int {
+func cariNama(t daftarSpace, n int, keyword string) int {
 	kiri := 0
 	kanan := n - 1
 	keyword = strings.ToLower(keyword)
@@ -115,7 +115,7 @@ func filterFasilitas(t daftarSpace, n int) {
 }
 
 // menampilkan daftar Co-Working Space yang memiliki fasilitas tertentu
-func cari(t daftarSpace, n int, keyword string) int {
+func cariSpace(t daftarSpace, n int, keyword string) int {
 	for i := 0; i < n; i++ {
 		if strings.EqualFold(t[i].Nama, keyword) || strings.EqualFold(t[i].Lokasi, keyword) {
 			return i
@@ -186,7 +186,7 @@ func tambahSpace(t *daftarSpace, n *int) {
 
 // fungsi untuk mengedit data berdasarkan nama
 func editSpace(t *daftarSpace, n int, nama string) {
-	indeks := cari(*t, n, nama)
+	indeks := cariSpace(*t, n, nama)
 	if indeks == -1 {
 		fmt.Println("Co-Working Space tidak ditemukan.")
 		return
@@ -219,7 +219,7 @@ func editSpace(t *daftarSpace, n int, nama string) {
 	input.Scan()
 	var ratingBaru float32 = 0
 	if _, err := fmt.Sscanf(input.Text(), "%f", &ratingBaru); err != nil || ratingBaru < 1 || ratingBaru > 5 { // Meminta input rating baru dengan validasi rentang 1-10
-		fmt.Println("Input rating tidak valid, gunakan angka 1-10.")
+		fmt.Println("Input rating tidak valid, gunakan angka 1-5.")
 		return
 	}
 	t[indeks].Rating = ratingBaru
@@ -233,7 +233,7 @@ func editSpace(t *daftarSpace, n int, nama string) {
 
 // fungsi untuk menghapus data berdasarkan nama
 func hapusSpace(t *daftarSpace, n *int, nama string) {
-	indeks := cari(*t, *n, nama)
+	indeks := cariSpace(*t, *n, nama)
 	if indeks == -1 {
 		fmt.Println("Co-Working Space tidak ditemukan.")
 		return
@@ -246,7 +246,7 @@ func hapusSpace(t *daftarSpace, n *int, nama string) {
 }
 
 // menampilkan seluruh daftar Co-Working Space
-func tampilkanDaftar(t daftarSpace, n int) {
+func tampilDaftar(t daftarSpace, n int) {
 	if n == 0 {
 		fmt.Println("Belum ada Co-Working Space.")
 		return
@@ -315,7 +315,7 @@ func main() {
 
 		switch pilihan {
 		case "1":
-			tampilkanDaftar(daftar, jumlah)
+			tampilDaftar(daftar, jumlah)
 		case "2":
 			tambahSpace(&daftar, &jumlah)
 		case "3":
@@ -327,11 +327,11 @@ func main() {
 			}
 		case "4":
 			//Binary Search Nama
-			insertionSortNama(&daftar, jumlah)
+			urutkanNama(&daftar, jumlah)
 			fmt.Print("Masukkan nama Co-Working Space: ")
 			if input.Scan() {
 				nama := input.Text()
-				indeks := binarySearchNama(daftar, jumlah, nama)
+				indeks := cariNama(daftar, jumlah, nama)
 				if indeks != -1 {
 					fmt.Println("Data ditemukan:")
 					fmt.Printf("Nama: %s\nLokasi: %s\nFasilitas: %s\nHarga: %d\nRating: %.1f\nReview: %s\n",
@@ -354,14 +354,14 @@ func main() {
 			}
 		case "6":
 			//Selection Sort
-			selectionSortHarga(&daftar, jumlah)
+			urutkanHarga(&daftar, jumlah)
 			fmt.Println("Data berhasil diurutkan berdasarkan harga sewa.")
-			tampilkanDaftar(daftar, jumlah)
+			tampilDaftar(daftar, jumlah)
 		case "7":
 			//Insertion Sort Descending
-			insertionSortRating(&daftar, jumlah)
+			urutkanRating(&daftar, jumlah)
 			fmt.Println("Data berhasil diurutkan berdasarkan rating.")
-			tampilkanDaftar(daftar, jumlah)
+			tampilDaftar(daftar, jumlah)
 		case "8":
 			filterFasilitas(daftar, jumlah)
 		case "9":
