@@ -1,9 +1,9 @@
-	package main
+package main
 
 import (
 	"bufio"
 	"fmt"
-	"os"	
+	"os"
 	"strings"
 )
 
@@ -20,7 +20,7 @@ type CoWorkingSpace struct {
 
 type daftarSpace [kapasitas]CoWorkingSpace
 
-// Fungsi sorting menggunakan Selection Sort berdasarkan HargaSewa (Ascending)
+// sorting menggunakan selection sort berdasarkan hargaSewa (ascending)
 func selectionSortHarga(t *daftarSpace, n int) {
 	for i := 0; i < n-1; i++ {
 		minIdx := i
@@ -34,7 +34,7 @@ func selectionSortHarga(t *daftarSpace, n int) {
 	}
 }
 
-// Fungsi sorting menggunakan Insertion Sort berdasarkan Rating (Descending)
+// sorting menggunakan insertion sort berdasarkan rating (descending)
 func insertionSortRating(t *daftarSpace, n int) {
 	for i := 1; i < n; i++ {
 		temp := t[i]
@@ -47,7 +47,7 @@ func insertionSortRating(t *daftarSpace, n int) {
 	}
 }
 
-// Fungsi sorting menggunakan Insertion Sort berdasarkan Nama (Ascending)
+// sorting menggunakan insertion sort berdasarkan nama (Ascending)
 func insertionSortNama(t *daftarSpace, n int) {
 	for i := 1; i < n; i++ {
 		temp := t[i]
@@ -60,7 +60,7 @@ func insertionSortNama(t *daftarSpace, n int) {
 	}
 }
 
-// Binary search pada nama Co-Working Space (harus sudah disorting terlebih dahulu)
+// binary search pada nama Co-Working Space (harus sudah disorting dulu)
 func binarySearchNama(t daftarSpace, n int, keyword string) int {
 	kiri := 0
 	kanan := n - 1
@@ -81,7 +81,7 @@ func binarySearchNama(t daftarSpace, n int, keyword string) int {
 	return -1
 }
 
-// Menampilkan daftar Co-Working Space yang memiliki fasilitas tertentu
+// menampilkan daftar Co-Working Space yang memiliki fasilitas tertentu
 func filterFasilitas(t daftarSpace, n int) {
 	var fasilitas string
 	fmt.Print("Masukkan fasilitas yang ingin dicari: ")
@@ -114,7 +114,7 @@ func filterFasilitas(t daftarSpace, n int) {
 	}
 }
 
-// Menampilkan daftar Co-Working Space yang memiliki fasilitas tertentu
+// menampilkan daftar Co-Working Space yang memiliki fasilitas tertentu
 func cari(t daftarSpace, n int, keyword string) int {
 	for i := 0; i < n; i++ {
 		if strings.EqualFold(t[i].Nama, keyword) || strings.EqualFold(t[i].Lokasi, keyword) {
@@ -124,8 +124,8 @@ func cari(t daftarSpace, n int, keyword string) int {
 	return -1
 }
 
-// Menampilkan daftar Co-Working Space yang memiliki fasilitas tertentu
-func addSpace(t *daftarSpace, n *int) {
+// menampilkan daftar Co-Working Space yang memiliki fasilitas tertentu
+func tambahSpace(t *daftarSpace, n *int) {
 	if *n >= kapasitas {
 		fmt.Println("Kapasitas penuh, tidak bisa menambah Co-Working Space.")
 		return
@@ -145,27 +145,46 @@ func addSpace(t *daftarSpace, n *int) {
 	input.Scan()
 	lokasi := input.Text()
 
-	fmt.Print("Masukkan harga sewa Co-Working Space: ")
-	input.Scan()
-	harga := input.Text()
+	var hargaInt int
+	for {
+		fmt.Print("Masukkan harga sewa Co-Working Space: ")
+		input.Scan()
+		harga := input.Text()
+		if _, err := fmt.Sscanf(harga, "%d", &hargaInt); err != nil || hargaInt < 0 {
+			fmt.Println("Input harga sewa tidak valid, gunakan angka positif.")
+			continue
+		}
+		break
+	}
 
-	fmt.Print("Masukkan rating Co-Working Space: ")
-	input.Scan()
-	rating := input.Text()
+	var ratingFloat float32
+	for {
+		fmt.Print("Masukkan rating Co-Working Space (1-5): ")
+		input.Scan()
+		rating := input.Text()
+		if _, err := fmt.Sscanf(rating, "%f", &ratingFloat); err != nil || ratingFloat < 1 || ratingFloat > 5 {
+			fmt.Println("Input rating tidak valid, gunakan angka 1-5.")
+			continue
+		}
+		break
+	}
 
 	fmt.Print("Masukkan review Co-Working Space: ")
 	input.Scan()
 	review := input.Text()
 
-	hargaInt := 0
-	fmt.Sscanf(harga, "%d", &hargaInt)
-	ratingFloat := float32(0)
-	fmt.Sscanf(rating, "%f", &ratingFloat)
-	t[*n] = CoWorkingSpace{Nama: nama, Fasilitas: fasilitas, Lokasi: lokasi, HargaSewa: hargaInt, Rating: ratingFloat, Review: review}
+	t[*n] = CoWorkingSpace{
+		Nama:      nama,
+		Fasilitas: fasilitas,
+		Lokasi:    lokasi,
+		HargaSewa: hargaInt,
+		Rating:    ratingFloat,
+		Review:    review,
+	}
 	*n = *n + 1
 }
 
-// Fungsi untuk mengedit data berdasarkan nama
+// fungsi untuk mengedit data berdasarkan nama
 func editSpace(t *daftarSpace, n int, nama string) {
 	indeks := cari(*t, n, nama)
 	if indeks == -1 {
@@ -183,16 +202,26 @@ func editSpace(t *daftarSpace, n int, nama string) {
 	input.Scan()
 	t[indeks].Fasilitas = input.Text()
 
+	fmt.Print("Masukkan lokasi baru: ")
+	input.Scan()
+	t[indeks].Lokasi = input.Text()
+
 	fmt.Print("Masukkan harga sewa baru: ")
 	input.Scan()
 	hargaBaru := 0
-	fmt.Sscanf(input.Text(), "%d", &hargaBaru)
+	if _, err := fmt.Sscanf(input.Text(), "%d", &hargaBaru); err != nil { // err handling untuk memastikan input valid
+		fmt.Println("Input harga sewa tidak valid, gunakan angka.")
+		return
+	}
 	t[indeks].HargaSewa = hargaBaru
 
-	fmt.Print("Masukkan rating baru: ")
+	fmt.Print("Masukkan rating baru (1-5): ")
 	input.Scan()
-	ratingBaru := float32(0)
-	fmt.Sscanf(input.Text(), "%f", &ratingBaru)
+	var ratingBaru float32 = 0
+	if _, err := fmt.Sscanf(input.Text(), "%f", &ratingBaru); err != nil || ratingBaru < 1 || ratingBaru > 5 { // Meminta input rating baru dengan validasi rentang 1-10
+		fmt.Println("Input rating tidak valid, gunakan angka 1-10.")
+		return
+	}
 	t[indeks].Rating = ratingBaru
 
 	fmt.Print("Masukkan review baru: ")
@@ -202,7 +231,7 @@ func editSpace(t *daftarSpace, n int, nama string) {
 	fmt.Println("Data berhasil diperbarui.")
 }
 
-// Fungsi untuk menghapus data berdasarkan nama
+// fungsi untuk menghapus data berdasarkan nama
 func hapusSpace(t *daftarSpace, n *int, nama string) {
 	indeks := cari(*t, *n, nama)
 	if indeks == -1 {
@@ -216,7 +245,7 @@ func hapusSpace(t *daftarSpace, n *int, nama string) {
 	fmt.Println("Co-Working Space berhasil dihapus.")
 }
 
-// Menampilkan seluruh daftar Co-Working Space
+// menampilkan seluruh daftar Co-Working Space
 func tampilkanDaftar(t daftarSpace, n int) {
 	if n == 0 {
 		fmt.Println("Belum ada Co-Working Space.")
@@ -288,7 +317,7 @@ func main() {
 		case "1":
 			tampilkanDaftar(daftar, jumlah)
 		case "2":
-			addSpace(&daftar, &jumlah)
+			tambahSpace(&daftar, &jumlah)
 		case "3":
 			//Sequential Search
 			fmt.Print("Masukkan nama Co-Working Space yang ingin diedit: ")
@@ -298,24 +327,24 @@ func main() {
 			}
 		case "4":
 			//Binary Search Nama
-			insertionSortNama(&daftar, jumlah) 
-				fmt.Print("Masukkan nama Co-Working Space: ")
-				if input.Scan() {
-					nama := input.Text()
-					indeks := binarySearchNama(daftar, jumlah, nama)
-					if indeks != -1 {
-						fmt.Println("Data ditemukan:")
-						fmt.Printf("Nama: %s\nLokasi: %s\nFasilitas: %s\nHarga: %d\nRating: %.1f\nReview: %s\n",
-							daftar[indeks].Nama,
-							daftar[indeks].Lokasi,
-							daftar[indeks].Fasilitas,
-							daftar[indeks].HargaSewa,
-							daftar[indeks].Rating,
-							daftar[indeks].Review)
-					} else {
-						fmt.Println("Data tidak ditemukan.")
-					}
+			insertionSortNama(&daftar, jumlah)
+			fmt.Print("Masukkan nama Co-Working Space: ")
+			if input.Scan() {
+				nama := input.Text()
+				indeks := binarySearchNama(daftar, jumlah, nama)
+				if indeks != -1 {
+					fmt.Println("Data ditemukan:")
+					fmt.Printf("Nama: %s\nLokasi: %s\nFasilitas: %s\nHarga: %d\nRating: %.1f\nReview: %s\n",
+						daftar[indeks].Nama,
+						daftar[indeks].Lokasi,
+						daftar[indeks].Fasilitas,
+						daftar[indeks].HargaSewa,
+						daftar[indeks].Rating,
+						daftar[indeks].Review)
+				} else {
+					fmt.Println("Data tidak ditemukan.")
 				}
+			}
 		case "5":
 			//Sequential Search
 			fmt.Print("Masukkan nama Co-Working Space yang ingin dihapus: ")
@@ -337,7 +366,7 @@ func main() {
 			filterFasilitas(daftar, jumlah)
 		case "9":
 			fmt.Println("Keluar dari program.")
-			return		
+			return
 		default:
 			fmt.Println("Pilihan tidak valid. Silakan coba lagi.")
 		}
