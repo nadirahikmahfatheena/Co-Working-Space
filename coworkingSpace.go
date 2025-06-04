@@ -206,23 +206,29 @@ func editSpace(t *daftarSpace, n int, nama string) {
 	input.Scan()
 	t[indeks].Lokasi = input.Text()
 
+	for {
 	fmt.Print("Masukkan harga sewa baru: ")
 	input.Scan()
 	hargaBaru := 0
-	if _, salah := fmt.Sscanf(input.Text(), "%d", &hargaBaru); salah != nil { // err handling untuk memastikan input valid
-		fmt.Println("Input harga sewa tidak valid, gunakan angka.")
-		return
+	if _, salah := fmt.Sscanf(input.Text(), "%d", &hargaBaru); salah != nil || hargaBaru < 0 {
+		fmt.Println("Input harga sewa tidak valid, gunakan angka positif.")
+		continue
 	}
 	t[indeks].HargaSewa = hargaBaru
+	break
+	}
 
+	for {
 	fmt.Print("Masukkan rating baru (1-5): ")
 	input.Scan()
-	var ratingBaru float32 = 0
-	if _, salah := fmt.Sscanf(input.Text(), "%f", &ratingBaru); salah != nil || ratingBaru < 1 || ratingBaru > 5 { // Meminta input rating baru dengan validasi rentang 1-10
+	var ratingBaru float32
+	if _, salah := fmt.Sscanf(input.Text(), "%f", &ratingBaru); salah != nil || ratingBaru < 1 || ratingBaru > 5 {
 		fmt.Println("Input rating tidak valid, gunakan angka 1-5.")
-		return
+		continue
 	}
 	t[indeks].Rating = ratingBaru
+	break
+	}
 
 	fmt.Print("Masukkan review baru: ")
 	input.Scan()
@@ -270,7 +276,7 @@ func tampilDaftar(t daftarSpace, n int) {
 
 func main() {
 	var daftar daftarSpace
-	jumlah := 20
+	jumlah := 19
 
 	daftar[0] = CoWorkingSpace{"Milestone", "WiFi, AC, Ruang Meeting", "Jl.Sudagaran", 75000, 4.7, "Nyaman dan tenang"}
 	daftar[1] = CoWorkingSpace{"Calf", "Kopi, Ruang Private", "Jl.Sudagaran", 60000, 4.5, "Suasana cozy"}
@@ -284,14 +290,13 @@ func main() {
 	daftar[9] = CoWorkingSpace{"CollabCorner", "WiFi, Printer, Dapur", "Jl.Agreement", 70000, 4.5, "Tempat untuk kolaborasi yang efektif"}
 	daftar[10] = CoWorkingSpace{"InnovateLab", "WiFi, Ruang Rapat, Dapur", "Jl.Inovasi", 85000, 4.8, "Tempat untuk inovasi dan eksperimen"}
 	daftar[11] = CoWorkingSpace{"BizHub", "WiFi, Meja Kerja, Ruang Presentasi", "Jl.Bisnis", 95000, 4.6, "Solusi untuk para pebisnis dan profesional"}
-	daftar[12] = CoWorkingSpace{"CodeSpace", "WiFi, Ruang Coding, Server", "Jl.Programmer", 85000, 4.9, "Didesain untuk developer dan IT"}
-	daftar[13] = CoWorkingSpace{"CreativityLab", "WiFi, Whiteboard, Ruang Galeri", "Jl.Art", 70000, 4.4, "Tempat untuk melahirkan ide-ide kreatif"}
-	daftar[14] = CoWorkingSpace{"VisionSpace", "WiFi, Ruang Meeting, Projector", "Jl.Vision", 78000, 4.5, "Ideal untuk brainstorming dan diskusi kelompok"}
-	daftar[15] = CoWorkingSpace{"FlexSpace", "WiFi, Meja Kerja, Ruang Santai", "Jl.Flexible", 68000, 4.3, "Ruang kerja fleksibel untuk berbagai kebutuhan"}
-	daftar[16] = CoWorkingSpace{"StartupSpace", "WiFi, Meja Kerja, Ruang Kolaborasi", "Jl.Startup", 80000, 4.6, "Dikhususkan untuk para startup dan wirausahawan"}
-	daftar[17] = CoWorkingSpace{"TechHub", "WiFi, Ruang Coding, Proyektor", "Jl.Teknologi", 88000, 4.7, "Tempat berkembangnya teknologi dan inovasi"}
-	daftar[18] = CoWorkingSpace{"WorkSpaceX", "WiFi, Ruang Meeting, Dapur", "Jl.SpaceX", 77000, 4.5, "Ruang kerja nyaman untuk tim dan individu"}
-	daftar[19] = CoWorkingSpace{"Collaborative", "WiFi, Printer, Ruang Acara", "Jl.Colab", 76000, 4.4, "Mendukung kolaborasi kreatif dalam berbagai proyek"}
+	daftar[12] = CoWorkingSpace{"CreativityLab", "WiFi, Whiteboard, Ruang Galeri", "Jl.Art", 70000, 4.4, "Tempat untuk melahirkan ide-ide kreatif"}
+	daftar[13] = CoWorkingSpace{"VisionSpace", "WiFi, Ruang Meeting, Projector", "Jl.Vision", 78000, 4.5, "Ideal untuk brainstorming dan diskusi kelompok"}
+	daftar[14] = CoWorkingSpace{"FlexSpace", "WiFi, Meja Kerja, Ruang Santai", "Jl.Flexible", 68000, 4.3, "Ruang kerja fleksibel untuk berbagai kebutuhan"}
+	daftar[15] = CoWorkingSpace{"StartupSpace", "WiFi, Meja Kerja, Ruang Kolaborasi", "Jl.Startup", 80000, 4.6, "Dikhususkan untuk para startup dan wirausahawan"}
+	daftar[16] = CoWorkingSpace{"TechHub", "WiFi, Ruang Coding, Proyektor", "Jl.Teknologi", 88000, 4.7, "Tempat berkembangnya teknologi dan inovasi"}
+	daftar[17] = CoWorkingSpace{"WorkSpaceX", "WiFi, Ruang Meeting, Dapur", "Jl.SpaceX", 77000, 4.5, "Ruang kerja nyaman untuk tim dan individu"}
+	daftar[18] = CoWorkingSpace{"Collaborative", "WiFi, Printer, Ruang Acara", "Jl.Colab", 76000, 4.4, "Mendukung kolaborasi kreatif dalam berbagai proyek"}
 
 	input := bufio.NewScanner(os.Stdin)
 
