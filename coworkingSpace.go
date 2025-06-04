@@ -23,14 +23,14 @@ type daftarSpace [kapasitas]CoWorkingSpace
 // sorting menggunakan selection sort berdasarkan hargaSewa (ascending)
 func urutkanHarga(t *daftarSpace, n int) {
 	for i := 0; i < n-1; i++ {
-		minIdx := i
+		minimum := i
 		for j := i + 1; j < n; j++ {
-			if t[j].HargaSewa < t[minIdx].HargaSewa {
-				minIdx = j
+			if t[j].HargaSewa < t[minimum].HargaSewa {
+				minimum = j
 			}
 		}
 		// Tukar elemen dengan harga sewa terkecil ke posisi ke-i
-		t[i], t[minIdx] = t[minIdx], t[i]
+		t[i], t[minimum] = t[minimum], t[i]
 	}
 }
 
@@ -47,7 +47,7 @@ func urutkanRating(t *daftarSpace, n int) {
 	}
 }
 
-// sorting menggunakan insertion sort berdasarkan nama (Ascending)
+// sorting menggunakan insertion sort berdasarkan alfabet dari nama
 func urutkanNama(t *daftarSpace, n int) {
 	for i := 1; i < n; i++ {
 		temp := t[i]
@@ -114,7 +114,6 @@ func filterFasilitas(t daftarSpace, n int) {
 	}
 }
 
-// menampilkan daftar Co-Working Space yang memiliki fasilitas tertentu
 func cariSpace(t daftarSpace, n int, keyword string) int {
 	for i := 0; i < n; i++ {
 		if strings.EqualFold(t[i].Nama, keyword) || strings.EqualFold(t[i].Lokasi, keyword) {
@@ -124,7 +123,6 @@ func cariSpace(t daftarSpace, n int, keyword string) int {
 	return -1
 }
 
-// menampilkan daftar Co-Working Space yang memiliki fasilitas tertentu
 func tambahSpace(t *daftarSpace, n *int) {
 	if *n >= kapasitas {
 		fmt.Println("Kapasitas penuh, tidak bisa menambah Co-Working Space.")
@@ -150,7 +148,7 @@ func tambahSpace(t *daftarSpace, n *int) {
 		fmt.Print("Masukkan harga sewa Co-Working Space: ")
 		input.Scan()
 		harga := input.Text()
-		if _, err := fmt.Sscanf(harga, "%d", &hargaInt); err != nil || hargaInt < 0 {
+		if _, salah := fmt.Sscanf(harga, "%d", &hargaInt); salah != nil || hargaInt < 0 {
 			fmt.Println("Input harga sewa tidak valid, gunakan angka positif.")
 			continue
 		}
@@ -162,7 +160,7 @@ func tambahSpace(t *daftarSpace, n *int) {
 		fmt.Print("Masukkan rating Co-Working Space (1-5): ")
 		input.Scan()
 		rating := input.Text()
-		if _, err := fmt.Sscanf(rating, "%f", &ratingFloat); err != nil || ratingFloat < 1 || ratingFloat > 5 {
+		if _, salah := fmt.Sscanf(rating, "%f", &ratingFloat); salah != nil || ratingFloat < 1 || ratingFloat > 5 {
 			fmt.Println("Input rating tidak valid, gunakan angka 1-5.")
 			continue
 		}
@@ -182,6 +180,8 @@ func tambahSpace(t *daftarSpace, n *int) {
 		Review:    review,
 	}
 	*n = *n + 1
+
+	fmt.Println("Data berhasil ditambah.")
 }
 
 // fungsi untuk mengedit data berdasarkan nama
@@ -209,7 +209,7 @@ func editSpace(t *daftarSpace, n int, nama string) {
 	fmt.Print("Masukkan harga sewa baru: ")
 	input.Scan()
 	hargaBaru := 0
-	if _, err := fmt.Sscanf(input.Text(), "%d", &hargaBaru); err != nil { // err handling untuk memastikan input valid
+	if _, salah := fmt.Sscanf(input.Text(), "%d", &hargaBaru); salah != nil { // err handling untuk memastikan input valid
 		fmt.Println("Input harga sewa tidak valid, gunakan angka.")
 		return
 	}
@@ -218,7 +218,7 @@ func editSpace(t *daftarSpace, n int, nama string) {
 	fmt.Print("Masukkan rating baru (1-5): ")
 	input.Scan()
 	var ratingBaru float32 = 0
-	if _, err := fmt.Sscanf(input.Text(), "%f", &ratingBaru); err != nil || ratingBaru < 1 || ratingBaru > 5 { // Meminta input rating baru dengan validasi rentang 1-10
+	if _, salah := fmt.Sscanf(input.Text(), "%f", &ratingBaru); salah != nil || ratingBaru < 1 || ratingBaru > 5 { // Meminta input rating baru dengan validasi rentang 1-10
 		fmt.Println("Input rating tidak valid, gunakan angka 1-5.")
 		return
 	}
@@ -241,7 +241,7 @@ func hapusSpace(t *daftarSpace, n *int, nama string) {
 	for i := indeks; i < *n-1; i++ {
 		t[i] = t[i+1]
 	}
-	*n--
+	*n = *n - 1
 	fmt.Println("Co-Working Space berhasil dihapus.")
 }
 
